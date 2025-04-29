@@ -1,5 +1,5 @@
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 from halo import Halo
 
@@ -13,14 +13,16 @@ def console_print(message: str, color_name: str = Color.WHITE) -> None:
 def load_document(folder: str = ""):
     if not folder:
         raise ValueError("The 'folder' parameter cannot be null or empty.")
-    
+
     # Start the spinner
     spinner.start()
 
     # bge-base embedding model
-    Settings.embed_model = HuggingFaceEmbedding(
-        model_name="BAAI/bge-base-en-v1.5")
-    Settings.llm = Ollama(model="llama3", request_timeout=360.0)
+    # from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+    # Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
+    Settings.embed_model = OllamaEmbedding(
+        model_name="nomic-embed-text:latest")
+    Settings.llm = Ollama(model="llama3.2", request_timeout=360.0)
 
     # Load all the text files from the specified "data" directory into a list of Document objects.
     documents = SimpleDirectoryReader(folder).load_data()
@@ -45,7 +47,7 @@ if __name__ == "__main__":
                 Color.LIGHT_BLUE + "Please enter your question (or type 'quit' to exit):" + Color.reset() + "\n")
 
             # Check if the user wants to quit
-            if user_question.lower() in ['quit', 'qq', 'bye', 'exit']:
+            if user_question.lower() in ['quit', 'qq', 'q', 'bye', 'exit']:
                 break
 
             spinner.start()
