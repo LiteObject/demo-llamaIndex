@@ -52,6 +52,17 @@ The project uses the following configurations:
 - LLM: Ollama (llama3 model)
 - LLM request timeout: 360.0 seconds
 
+---
+## Q&A
+**Q: What are the differences betwen `as_chat_engine` and `as_query_engine`?**
+
+**A:** The `as_chat_engine` method is used to create a chat engine that can handle conversational interactions, while the `as_query_engine` method is used to create a query engine that can handle specific queries. The chat engine is designed for interactive conversations, while the query engine is more focused on retrieving information based on specific queries.
+
+- **Use case** for `as_query_engine`: Fact-based Q&A, search, retrieval.
+- **Use case** for `as_chat_engine`: Chatbots, assistants, or any scenario where context from previous turns matters.
+
+---
+
 ## Links
 - [Starter Example (local)](https://docs.llamaindex.ai/en/stable/getting_started/starter_example_local/)
 - [Starter Example (OpenAI)](https://docs.llamaindex.ai/en/stable/getting_started/starter_example/)
