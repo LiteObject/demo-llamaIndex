@@ -12,7 +12,9 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 Settings.embed_model = OllamaEmbedding(
     model_name="nomic-embed-text:latest")
-Settings.llm = Ollama(model="phi4:latest", request_timeout=360.0)
+Settings.llm = Ollama(model="phi4:latest",
+                      temperature=0.1,
+                      request_timeout=360.0)
 
 # Set up PostgreSQL connection
 # Replace with your PostgreSQL credentials and database details
