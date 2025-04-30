@@ -10,4 +10,9 @@ INSERT INTO city_stats (city_name, population, country) VALUES
 ('Chicago', 2679000, 'United States'),
 ('Seoul', 9776000, 'South Korea'),
 ('Fargo', 125990, 'United States'),
-('Frisco', 207908, 'United States');
+('Frisco', 207908, 'United States'),
+('London', 8982000, 'United Kingdom'),
+('Sydney', 5312000, 'Australia'),
+('Dallas', 1343000, 'United States'),
+('Berlin', 3769000, 'Germany'),
+('Cape Town', 4337000, 'South Africa');

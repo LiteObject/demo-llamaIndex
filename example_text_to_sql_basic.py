@@ -1,12 +1,18 @@
-from sqlalchemy import create_engine
-from llama_index.core import SQLDatabase, Settings
+import logging
+import sys
+
+from llama_index.core import Settings, SQLDatabase
 from llama_index.core.query_engine import NLSQLTableQueryEngine
-from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.llms.ollama import Ollama
+from sqlalchemy import create_engine
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 Settings.embed_model = OllamaEmbedding(
     model_name="nomic-embed-text:latest")
-Settings.llm = Ollama(model="llama3.2:latest", request_timeout=360.0)
+Settings.llm = Ollama(model="phi4:latest", request_timeout=360.0)
 
 # Set up PostgreSQL connection
 # Replace with your PostgreSQL credentials and database details
@@ -34,9 +40,10 @@ query_engine = NLSQLTableQueryEngine(
 )
 
 # Perform a natural language query
-QUERY_STR = "Which city has the lowest population?"
+# QUERY_STR = "Which city has the lowest population?"
+QUERY_STR = "Return the top 5 cities (along with their populations) with the highest population."
 response = query_engine.query(QUERY_STR)
 
 # Display the result
-print(f"Query: {QUERY_STR}")
+print(f"\nQuery: {QUERY_STR}")
 print(f"Response: {response}")
