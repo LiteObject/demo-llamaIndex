@@ -22,4 +22,3 @@ class Color:
     @staticmethod
     def reset():
         return "\033[0m"  # Reset color to default
-    

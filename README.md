@@ -67,3 +67,4 @@ The project uses the following configurations:
 - [Starter Example (local)](https://docs.llamaindex.ai/en/stable/getting_started/starter_example_local/)
 - [Starter Example (OpenAI)](https://docs.llamaindex.ai/en/stable/getting_started/starter_example/)
 - [GitHub/Llama-Index](https://github.com/run-llama/llama_index)
+- [LlamaHub](https://llamahub.ai/)
