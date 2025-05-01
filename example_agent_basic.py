@@ -1,46 +1,51 @@
-from llama_index.core import Settings
-from llama_index.core.agent import ReActAgent
-from llama_index.core.tools import FunctionTool
-from llama_index.embeddings.ollama import OllamaEmbedding
+# This script demonstrates using llama_index's AgentWorkflow with
+# Ollama LLM, Yahoo Finance tools, and custom math tools.
 from llama_index.llms.ollama import Ollama
+from llama_index.core.tools import FunctionTool
+from llama_index.core.agent.workflow import FunctionAgent
 
-# Set up the embedding model for converting text to vectors
-Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-# Set up the language model (LLM) for answering questions
-Settings.llm = Ollama(model="phi4:latest",
-                      temperature=0.1,
-                      request_timeout=360.0)
 
-llm = Settings.llm
+def multiply(a: float, b: float) -> float:
+    """Multiply two numbers and returns the product"""
+    return a * b
 
-def add(x: int, y: int) -> int:
-    """Return the sum of x and y."""
-    return x + y
 
-def subtract(x: int, y: int) -> int:
-    """Return the difference of x and y (x - y)."""
-    return x - y
+def add(a: float, b: float) -> float:
+    """Add two numbers and returns the sum"""
+    return a + b
 
-def multiply(x: int, y: int) -> int:
-    """Return the product of x and y."""
-    return x * y
 
-def divide(x: int, y: int) -> int:
-    """Return the quotient of x divided by y. Raises ValueError if y is zero."""
-    if y == 0:
-        raise ValueError("Cannot divide by zero.")
-    return x / y
+tools = [
+    # Register custom math tools. Add more tools here as needed.
+    FunctionTool.from_defaults(multiply),
+    FunctionTool.from_defaults(add)
+]
 
-# Create tools from the defined functions
-add_tool = FunctionTool.from_defaults(fn=add)
-subtract_tool = FunctionTool.from_defaults(fn=subtract)
-multiply_tool = FunctionTool.from_defaults(fn=multiply)
-divide_tool = FunctionTool.from_defaults(fn=divide)
+# Initialize the Ollama LLM with a model that supports tools/function calling
+llm = Ollama(model="llama3.2:latest",
+             temperature=0.1,
+             request_timeout=360.0)
 
-# Initialize the ReActAgent with the tools and language model
-agent = ReActAgent.from_tools(
-    [add_tool, subtract_tool, multiply_tool, divide_tool], llm=llm, verbose=True)
+# Create an agent workflow that can use the math tools
+agent = FunctionAgent(
+    name="math_agent",
+    description="An agent that can perform basic mathematical operations using tools.",
+    tools=tools,
+    llm=llm,
+    system_prompt="You are an agent that can perform basic mathematical operations using tools.",
+    verbose=True)
 
-# Use the agent to answer a question
-response = agent.chat("What is 20+(2*4)?")
-print(response)
+
+async def main() -> None:
+    """Main entry point for running the math agent demo."""
+    try:
+        # Ask the agent a math question using the custom math tools
+        response = await agent.run(user_msg="What is 20+(2*4)?")
+        print(response)
+    except (RuntimeError, ValueError) as e:
+        print(f"An error occurred while running the agent: {e}")
+
+# Run the main function if this script is executed directly
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
