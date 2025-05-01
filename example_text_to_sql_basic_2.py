@@ -29,19 +29,20 @@ engine = create_engine(
     f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 
 # Initialize SQLDatabase with the table we want to query
-sql_database = SQLDatabase(engine, include_tables=["city_stats"])
+sql_database = SQLDatabase(engine, include_tables=[
+                           "city_stats", "country_stats"])
 
 # Configure Ollama LLM (ensure Ollama is running locally)
 # llm = Ollama(model="llama3.2:latest", temperature=0.1, request_timeout=360.0)
 
 # Create the NLSQLRetriever
 nl_sql_retriever = NLSQLRetriever(
-    sql_database, tables=["city_stats"], return_raw=True
+    sql_database, tables=["city_stats", "country_stats"], return_raw=True
 )
 
 # Perform a natural language query
 results = nl_sql_retriever.retrieve(
-    "Return the top 5 cities (along with their populations) with the highest population."
+    "Return the top 5 cities (along with their populations and countries) with the highest population."
 )
 
 # Display the result

@@ -29,7 +29,8 @@ engine = create_engine(
     f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 
 # Initialize SQLDatabase with the table we want to query
-sql_database = SQLDatabase(engine, include_tables=["city_stats"])
+sql_database = SQLDatabase(engine, include_tables=[
+                           "city_stats", "country_stats"])
 
 # Configure Ollama LLM (ensure Ollama is running locally)
 # llm = Ollama(model="llama3.2:latest", temperature=0.1, request_timeout=360.0)
@@ -37,13 +38,15 @@ sql_database = SQLDatabase(engine, include_tables=["city_stats"])
 # Create the NLSQLTableQueryEngine
 query_engine = NLSQLTableQueryEngine(
     sql_database=sql_database,
-    tables=["city_stats"],  # Specify table to avoid context overflow
+    # Specify table to avoid context overflow
+    tables=["city_stats", "country_stats"],
     # llm=llm
 )
 
 # Perform a natural language query
 # QUERY_STR = "Which city has the lowest population?"
-QUERY_STR = "Return the top 5 cities (along with their populations) with the highest population."
+QUERY_STR = "Return the top 5 cities (along with their populations " \
+    "and countries) with the highest population."
 response = query_engine.query(QUERY_STR)
 
 # Display the result
