@@ -1,8 +1,17 @@
 # This script demonstrates using llama_index's AgentWorkflow with
 # Ollama LLM, Yahoo Finance tools, and custom math tools.
+# For more tools: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/tools
+# or https://llamahub.ai/
+import os
+
+from dotenv import load_dotenv
 from llama_index.llms.ollama import Ollama
 from llama_index.core.agent.workflow import AgentWorkflow
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
+from llama_index.tools.duckduckgo import DuckDuckGoSearchToolSpec
+from llama_index.tools.tavily_research import TavilyToolSpec
+
+load_dotenv()
 
 # Define a tool to multiply two numbers
 
@@ -28,11 +37,17 @@ llm = Ollama(model="llama3.2:latest",
 finance_tools = YahooFinanceToolSpec().to_tool_list()
 finance_tools.extend([multiply, add])
 
+# ddg_search_tools = DuckDuckGoSearchToolSpec().to_tool_list()
+
+tavily_search_tools = TavilyToolSpec(
+    api_key=os.environ['TAVILY_API_KEY']).to_tool_list()
+
 # Create an agent workflow that can use the finance and math tools
 workflow = AgentWorkflow.from_tools_or_functions(
-    finance_tools,
+    finance_tools + tavily_search_tools,
     llm=llm,
-    system_prompt="You are an agent that can perform basic mathematical operations using tools."
+    system_prompt="You are an agent that can perform web searches and provide information using tools.",
+    verbose=True,
 )
 
 # Main async function to run the workflow with a finance question
@@ -41,7 +56,10 @@ workflow = AgentWorkflow.from_tools_or_functions(
 async def main():
     # Ask the agent to get the current stock price of NVIDIA using the Yahoo Finance tool
     response = await workflow.run(user_msg="What's the current stock price of NVIDIA?")
-    print(response)
+    print(response, "\n\n")
+
+    response = await workflow.run(user_msg="What are the latest international news?")
+    print(response, "\n")
 
 # Run the main function if this script is executed directly
 if __name__ == "__main__":
