@@ -6,7 +6,7 @@ import os
 
 from dotenv import load_dotenv
 from llama_index.llms.ollama import Ollama
-from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.tools.yahoo_finance import YahooFinanceToolSpec
 from llama_index.tools.duckduckgo import DuckDuckGoSearchToolSpec
 from llama_index.tools.tavily_research import TavilyToolSpec
@@ -43,11 +43,12 @@ tavily_search_tools = TavilyToolSpec(
     api_key=os.environ['TAVILY_API_KEY']).to_tool_list()
 
 # Create an agent workflow that can use the finance and math tools
-workflow = AgentWorkflow.from_tools_or_functions(
-    finance_tools + tavily_search_tools,
+workflow = FunctionAgent(
+    name="general_agent",
+    tools=finance_tools + tavily_search_tools,
     llm=llm,
-    system_prompt="You are an agent that can perform web searches and provide information using tools.",
-    verbose=True,
+    system_prompt=("You are an agent that can perform web searches "
+                   "and provide information using tools."),
 )
 
 # Main async function to run the workflow with a finance question
@@ -56,7 +57,7 @@ workflow = AgentWorkflow.from_tools_or_functions(
 async def main():
     # Ask the agent to get the current stock price of NVIDIA using the Yahoo Finance tool
     response = await workflow.run(user_msg="What's the current stock price of NVIDIA?")
-    print(response, "\n\n")
+    print(response, "\n")
 
     response = await workflow.run(user_msg="What are the latest international news?")
     print(response, "\n")
