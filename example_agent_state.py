@@ -1,7 +1,7 @@
 from llama_index.llms.ollama import Ollama
 from llama_index.core.agent.workflow import AgentWorkflow
 from llama_index.core.workflow import Context
-from llama_index.core.workflow import JsonPickleSerializer, JsonSerializer
+from llama_index.core.workflow import JsonSerializer
 
 
 def add(a: float, b: float) -> float:
