@@ -30,8 +30,10 @@ input_msg = ChatMessage.from_str("Tell me about Canada.")
 
 # Send the message to the LLM and get the structured response
 output = sllm.chat([input_msg])
-output_obj = output.raw  # The raw structured output as a Country object
+output_obj: Country = output.raw  # The raw structured output as a Country object
 
 # Print the string representation and the raw object
-print(str(output))
-print(output_obj)
+print(type(output_obj))      # Shows <class '__main__.Country'>
+print(str(output))           # Shows the ChatResponse
+print(output_obj.name)       # Correct: prints the country name
+print(output_obj)            # Prints the Country object
