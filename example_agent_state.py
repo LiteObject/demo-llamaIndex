@@ -3,6 +3,8 @@ from llama_index.core.agent.workflow import AgentWorkflow
 from llama_index.core.workflow import Context
 from llama_index.core.workflow import JsonSerializer
 
+# Define a simple math tool function
+
 
 def add(a: float, b: float) -> float:
     """Add two numbers and returns the sum"""
@@ -14,6 +16,7 @@ llm = Ollama(model="llama3.2:latest",
              temperature=0.1,
              request_timeout=360.0)
 
+# Create an agent workflow with the math tool and a system prompt
 workflow = AgentWorkflow.from_tools_or_functions(
     [add],
     llm=llm,
