@@ -1,4 +1,5 @@
 from typing import List
+from ollama import ChatResponse
 from pydantic import BaseModel, Field
 from llama_index.llms.ollama import Ollama
 from llama_index.core.llms import ChatMessage
@@ -29,11 +30,11 @@ sllm = llm.as_structured_llm(output_cls=Country)
 input_msg = ChatMessage.from_str("Tell me about Canada.")
 
 # Send the message to the LLM and get the structured response
-output = sllm.chat([input_msg])
+output: ChatResponse = sllm.chat([input_msg])
 output_obj: Country = output.raw  # The raw structured output as a Country object
 
 # Print the string representation and the raw object
-print(type(output_obj))      # Shows <class '__main__.Country'>
 print(str(output))           # Shows the ChatResponse
+print(type(output_obj))      # Shows <class '__main__.Country'>
 print(output_obj.name)       # Correct: prints the country name
 print(output_obj)            # Prints the Country object
