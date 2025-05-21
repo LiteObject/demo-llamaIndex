@@ -1,13 +1,13 @@
 CREATE TABLE country_stats (
     country_id SERIAL PRIMARY KEY,
     country_name VARCHAR(50) NOT NULL UNIQUE,
-    population INTEGER
+    country_population INTEGER
 );
 
 CREATE TABLE city_stats (
     city_id SERIAL PRIMARY KEY,
     city_name VARCHAR(50) NOT NULL,
-    population INTEGER,
+    city_population INTEGER,
     country_id INTEGER REFERENCES country_stats(country_id)
 );
 
