@@ -58,7 +58,9 @@ query_engine = NLSQLTableQueryEngine(
 QUERY_STR = "Return the top 5 cities (along with their populations " \
     "and countries) with the highest population."
 response = query_engine.query(QUERY_STR)
+sql_query = response.metadata['sql_query']
 
 # Display the result
-print(f"\nQuery: {QUERY_STR}")
-print(f"Response: {response}")
+print(f"\n>>> Query:\n{QUERY_STR}")
+print(f"\n>>> SQL Query:\n{sql_query}")
+print(f"\n>>> Response:\n{response}")
