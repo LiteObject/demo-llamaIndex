@@ -23,6 +23,17 @@ try:
         connect_timeout=5
     )
     print("Connection successful!")
+
+    # Create a cursor object using the connection
+    cur = conn.cursor()
+
+    # Execute the query to select all records from city_stats table
+    cur.execute("SELECT * FROM city_stats;")
+
+    # Fetch and print the results
+    rows = cur.fetchall()
+    for row in rows:
+        print(row)
 except (psycopg2.OperationalError, psycopg2.ProgrammingError) as e:
     print(f"Database connection error: {e}")
 finally:

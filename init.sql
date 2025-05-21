@@ -11,7 +11,7 @@ CREATE TABLE city_stats (
     country_id INTEGER REFERENCES country_stats(country_id)
 );
 
-INSERT INTO country_stats (country_name, population) VALUES
+INSERT INTO country_stats (country_name, country_population) VALUES
 ('Canada', 38000000),
 ('Japan', 125800000),
 ('United States', 331000000),
@@ -21,7 +21,7 @@ INSERT INTO country_stats (country_name, population) VALUES
 ('Germany', 83100000),
 ('South Africa', 59310000);
 
-INSERT INTO city_stats (city_name, population, country_id) VALUES
+INSERT INTO city_stats (city_name, city_population, country_id) VALUES
 ('Toronto', 2930000, 1),
 ('Tokyo', 13960000, 2),
 ('Chicago', 2679000, 3),
