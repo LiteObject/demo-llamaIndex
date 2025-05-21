@@ -5,14 +5,15 @@ from llama_index.core import Settings, SQLDatabase
 from llama_index.core.query_engine import NLSQLTableQueryEngine
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
+import psycopg2
 from sqlalchemy import create_engine
+import sqlalchemy
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
-Settings.embed_model = OllamaEmbedding(
-    model_name="nomic-embed-text:latest")
-Settings.llm = Ollama(model="phi4:latest",
+Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text:latest")
+Settings.llm = Ollama(model="qwen2.5:7b-instruct-q8_0",
                       temperature=0.1,
                       request_timeout=360.0)
 
@@ -28,6 +29,14 @@ DB_NAME = "city_db"
 engine = create_engine(
     f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 
+try:
+    # Test the connection by opening a connection and closing it immediately
+    with engine.connect() as connection:
+        logging.info("Database connection successful.")
+except (sqlalchemy.exc.OperationalError, psycopg2.OperationalError) as e:
+    logging.error("Failed to connect to database: %s", e)
+    sys.exit(1)
+
 # Initialize SQLDatabase with the table we want to query
 sql_database = SQLDatabase(engine, include_tables=[
                            "city_stats", "country_stats"])
@@ -40,7 +49,8 @@ query_engine = NLSQLTableQueryEngine(
     sql_database=sql_database,
     # Specify table to avoid context overflow
     tables=["city_stats", "country_stats"],
-    # llm=llm
+    # llm=llm,
+    verbose=True
 )
 
 # Perform a natural language query
