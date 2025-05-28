@@ -1,2 +1,7 @@
 [core]
 disable=missing-docstring
+
+[MESSAGES CONTROL]
+# Disable line-too-long warning
+# You can add other disables separated by commas, e.g. disable=C0114,C0115,C0301
+disable=C0301
