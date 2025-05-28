@@ -48,13 +48,14 @@ async def write_report(ctx: Context, report_content: str, filename: str = "repor
     current_state = await ctx.get("state")
     current_state["report_content"] = report_content
     await ctx.set("state", current_state)
-    # Add datetime stamp to filename to avoid duplicates
+    # Add datetime stamp to filename to avoid duplicates and save in docs folder
     base, ext = os.path.splitext(filename)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     filename_with_stamp = f"{base}_{timestamp}{ext}"
-    with open(filename_with_stamp, "w", encoding="utf-8") as f:
+    docs_path = os.path.join("./docs", filename_with_stamp)
+    with open(docs_path, "w", encoding="utf-8") as f:
         f.write(report_content)
-    return f"Report written and saved to {filename_with_stamp}."
+    return f"Report written and saved to {docs_path}."
 
 
 # Tool function for reviewing a report and saving feedback in the agent's state
@@ -121,12 +122,16 @@ agent_workflow = AgentWorkflow(
 
 
 async def main():
-    handler = agent_workflow.run(user_msg="""
+    # Dynamically get current month and year
+    current_month_year = datetime.datetime.now().strftime("%B %Y")
+    handler = agent_workflow.run(user_msg=f"""
         Write a 5,000-word blog post that highlights and explains 5 to 7 of the most recent 
-        and significant developments in health science as of May 2025. Use the 
+        and significant developments in health science as of {current_month_year}. Use the 
         most up-to-date information from trusted sources such as PubMed, ScienceDaily, Medical 
-        News Today, Healthline, and the NIH. Focus on topics that are relevant to general 
-        readers and provide clear, accessible explanations of each breakthrough. Include relevant 
+        News Today, Healthline, and the NIH. For each development, cite your sources in-line 
+        in markdown format, including the article or study title, author(s) if available, 
+        publication date, and a direct URL. Focus on topics that are relevant to general readers 
+        and provide clear, accessible explanations of each breakthrough. Include relevant 
         statistics, cite the source and publication date of each study or article, and end with 
         a takeaway section summarizing why these updates matter for everyday health. Maintain a 
         tone that is informative yet conversational, suitable for a health-conscious audience 
