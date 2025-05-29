@@ -10,18 +10,11 @@ from llama_index.core.agent.workflow import (
 from llama_index.core import Settings
 from llama_index.core.workflow import Context
 from llama_index.core.agent.workflow import AgentWorkflow
-from llama_index.llms.ollama import Ollama
-from llama_index.embeddings.ollama import OllamaEmbedding
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
+from llm_factory import get_llm, get_embedding_model, LLMType
 
 # Set up the embedding model and LLM for LlamaIndex
-Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text:latest")
-Settings.llm = Ollama(model="qwen2.5:7b-instruct-q8_0",
-                      temperature=0.1,
-                      request_timeout=360.0)
+Settings.embed_model = get_embedding_model(llm_type=LLMType.OPENAI)
+Settings.llm = get_llm(llm_type=LLMType.OPENAI)
 
 # Initialize the Tavily tool for web search using API key from environment
 # This tool will be used by the ResearchAgent to search the web
