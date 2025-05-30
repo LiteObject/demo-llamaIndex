@@ -1,5 +1,7 @@
+from dataclasses import field
 import os
 import datetime
+from typing import List
 from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.tools.tavily_research import TavilyToolSpec
 from llama_index.core.agent.workflow import (
@@ -21,6 +23,35 @@ Settings.llm = get_llm(llm_type=LLMType.OPENAI)
 # and is converted to a tool list (only the first tool is used)
 tavily_tool = TavilyToolSpec(api_key=os.getenv("TAVILY_API_KEY"))
 search_web = tavily_tool.to_tool_list()[0]
+
+# Trusted Sources
+trusted_sources: List[str] = [
+    # Scientific Journals and Research Databases
+    "PubMed (pubmed.ncbi.nlm.nih.gov)",
+    "Google Scholar",
+    "The Lancet (thelancet.com)",
+    "Nature Medicine (nature.com/nm)",
+    "ScienceDirect (sciencedirect.com)"
+    # Health News Aggregators and Research Summaries
+    "ScienceDaily (sciencedaily.com)",
+    "Medical News Today (medicalnewstoday.com)",
+    "Healthline (healthline.com)",
+    "Everyday Health (everydayhealth.com)",
+    # Government and Institutional Health Websites
+    "National Institutes of Health (NIH) (nih.gov)",
+    "World Health Organization (WHO) (who.int)",
+    "Centers for Disease Control and Prevention (CDC) (cdc.gov)",
+    "MedlinePlus (medlineplus.gov)",
+    # Health Blogs and Professional Networks
+    "Harvard Health Blog (health.harvard.edu)",
+    "Kaiser Health News (KHN) (kffhealthnews.org)",
+    "WebMD Doctors Blog (webmd.com)",
+    "MobiHealthNews (mobihealthnews.com)",
+    # Conferences and Webinars
+    "HIMSS (Healthcare Information and Management Systems Society) (himss.org)",
+    "American Public Health Association (APHA) (apha.org)",
+    "TEDMED (tedmed.com)"
+]
 
 # Tool function for recording research notes in the agent's state
 
@@ -117,22 +148,22 @@ agent_workflow = AgentWorkflow(
 async def main():
     # Dynamically get current month and year
     current_month_year = datetime.datetime.now().strftime("%B %Y")
+    sources_str = ", ".join(trusted_sources)
     handler = agent_workflow.run(user_msg=f"""
         Write a 5,000-word blog post that highlights and explains 5 to 7 of the most recent 
         and significant developments in health science as of {current_month_year}. Use the 
-        most up-to-date information from trusted sources such as PubMed, ScienceDaily, Medical 
-        News Today, Healthline, and the NIH. For each development, cite your sources in-line 
-        in markdown format, including the article or study title, author(s) if available, 
-        publication date, and a direct URL. Focus on topics that are relevant to general readers 
-        and provide clear, accessible explanations of each breakthrough. Include relevant 
-        statistics, cite the source and publication date of each study or article, and end with 
-        a takeaway section summarizing why these updates matter for everyday health. Maintain a 
-        tone that is informative yet conversational, suitable for a health-conscious audience 
-        who may not have a medical background.
+        most up-to-date information from trusted sources such as {sources_str}. For each 
+        development, cite your sources in-line in markdown format, including the article or 
+        study title, author(s) if available, publication date, and a direct URL. Focus on 
+        topics that are relevant to general readers and provide clear, accessible explanations 
+        of each breakthrough. Include relevant statistics, cite the source and publication 
+        date of each study or article, and end with a takeaway section summarizing why these 
+        updates matter for everyday health. Maintain a tone that is informative yet conversational, 
+        suitable for a health-conscious audience who may not have a medical background.
     """)
 
     current_agent = None
-    current_tool_calls = ""
+
     async for event in handler.stream_events():
         # Print when the current agent changes
         if (
